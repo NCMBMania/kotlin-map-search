@@ -18,23 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.nifcloud.mbaas.core.NCMBCallback
-import com.nifcloud.mbaas.core.NCMBFile
-import com.nifcloud.mbaas.core.NCMBObject
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.graphics.asImageBitmap
 
 @Composable
-fun ListRow(obj: NCMBObject) {
+fun ListRow(obj: Any) { // 本当はAnyではなくNCMBObject
     var bitmap = remember { mutableStateOf<Bitmap?>(null) }
-    val file = NCMBFile(obj.getString("fileName")!!)
-    file.fetchInBackground(NCMBCallback { e, data ->
-        if (e == null && file.fileDownloadByte != null) {
-            val data = file.fileDownloadByte!!
-            bitmap.value = BitmapFactory.decodeByteArray(data, 0, data.size)
-        }
-    })
+    val file = null // ← ダミーです
+    // ファイルをダウンロードする処理（後述）
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -53,6 +45,6 @@ fun ListRow(obj: NCMBObject) {
         } else {
             Icon(Icons.Rounded.Image, "説明", Modifier.size(size = 150.dp))
         }
-        Text(obj.getString("text")!!)
+        Text("") // obj.getString("text")!!)
     }
 }

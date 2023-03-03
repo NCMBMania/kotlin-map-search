@@ -1,5 +1,7 @@
 package com.example.kotlinfirstdemo
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddBox
@@ -16,10 +18,13 @@ import com.example.kotlinfirstdemo.ui.theme.KotlinFirstDemoTheme
 import androidx.navigation.compose.NavHost as NavHost
 
 sealed class Item(var dist: String, var icon: ImageVector) {
+    // フォーム画面用
     object Form : Item("Form", Icons.Rounded.AddBox)
+    // 一覧画面用
     object List : Item("List", Icons.Rounded.List)
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun MemoBottomNavigation() {
     var selectedItem = remember { mutableStateOf(0) }
@@ -52,6 +57,7 @@ fun MemoBottomNavigation() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Preview(showBackground = true)
 @Composable
 fun BottomNavigationPreview() {

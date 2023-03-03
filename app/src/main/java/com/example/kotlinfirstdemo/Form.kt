@@ -24,8 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.nifcloud.mbaas.core.NCMBFile
-import com.nifcloud.mbaas.core.NCMBObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
@@ -34,18 +32,23 @@ import java.util.*
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun FormScreen() {
-    var imageUri = remember { mutableStateOf<Uri?>(null) }
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var imageUri = remember { mutableStateOf<Uri?>(null) }   // 画像を指定した場合のURIが入る
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) } // 画像データが入る
+    var memo by remember { mutableStateOf("") } // メモのテキスト文が入る
+    var showDialog by remember { mutableStateOf(false) } // ダイアログを表示する場合 true にする
     val context = LocalContext.current
+
     val launcher = rememberLauncherForActivityResult(contract =
     ActivityResultContracts.GetContent()) { uri: Uri? ->
+        // 画像があれば、ビットマップデータ化する
         if (uri != null) {
             imageUri.value = uri
             val source = ImageDecoder.createSource(context.contentResolver, uri!!)
             bitmap = ImageDecoder.decodeBitmap(source)
         }
     }
-    var showDialog by remember { mutableStateOf(false) }
+
+    // ダイアログを表示するフロー
     if (showDialog) {
        AlertDialog(
            onDismissRequest = {},
@@ -60,7 +63,8 @@ fun FormScreen() {
            text = {Text("保存完了しました")}
        )
     }
-    var memo by remember { mutableStateOf("") }
+
+    // 画面について
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -103,20 +107,11 @@ fun FormScreen() {
     }
 }
 
+// 入力されたテキスト、画像データをNCMBに保存する関数
 fun save(context: Context, bitmap: Bitmap, memo: String, imageUri: Uri) {
-    val uuidString = UUID.randomUUID().toString()
-    val match = Regex("^.*\\.(.*)$").find(imageUri.toString())
-    val extension = if (match != null) match!!.groups[1]!!.value.lowercase() else "png"
-    val fileName = "${uuidString}.${extension}"
-    val file = NCMBFile(fileName = fileName, fileData = getFile(uuidString, extension, bitmap!!, context = context))
-    file.save()
-    // 次にメモを保存
-    val obj = NCMBObject("Memo")
-    obj.put("text", memo)
-    obj.put("fileName", fileName)
-    obj.save()
 }
 
+// ファイルのデータを返す
 fun getFile(fileName: String, extension: String, bitmap: Bitmap, context: Context): File {
     val outputDir = context.cacheDir
     val outputFile = File.createTempFile(fileName, ".${extension}", outputDir)

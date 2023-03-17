@@ -6,6 +6,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddBox
 import androidx.compose.material.icons.rounded.List
+import androidx.compose.material.icons.rounded.Map
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,17 +20,17 @@ import com.example.kotlinfirstdemo.ui.theme.KotlinFirstDemoTheme
 import androidx.navigation.compose.NavHost as NavHost
 
 sealed class Item(var dist: String, var icon: ImageVector) {
-    // フォーム画面用
-    object Form : Item("Form", Icons.Rounded.AddBox)
-    // 一覧画面用
-    object List : Item("List", Icons.Rounded.List)
+    // 地図画面用
+    object Map : Item("Map", Icons.Rounded.Map)
+    // インポート画面用
+    object Import : Item("Import", Icons.Rounded.Settings)
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun MemoBottomNavigation() {
+fun MapBottomNavigation() {
     var selectedItem = remember { mutableStateOf(0) }
-    val items = listOf(Item.Form, Item.List)
+    val items = listOf(Item.Map, Item.Import)
     val navController = rememberNavController()
     KotlinFirstDemoTheme {
         Surface(color = MaterialTheme.colors.background) {
@@ -47,10 +49,10 @@ fun MemoBottomNavigation() {
                         }
                     }
                 }
-            ) {
-                NavHost(navController = navController, startDestination = "Form") {
-                    composable("Form") { FormScreen()}
-                    composable("List") { ListScreen()}
+            ) { _ ->
+                NavHost(navController = navController, startDestination = "Map") {
+                    composable("Map") { MapScreen()}
+                    composable("Import") { ImportScreen()}
                 }
             }
         }
@@ -62,6 +64,6 @@ fun MemoBottomNavigation() {
 @Composable
 fun BottomNavigationPreview() {
     KotlinFirstDemoTheme {
-        MemoBottomNavigation()
+        MapBottomNavigation()
     }
 }
